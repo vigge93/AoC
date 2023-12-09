@@ -1,6 +1,7 @@
 import time
 from itertools import cycle
 from functools import reduce
+import math
 
 day = 8
 
@@ -16,19 +17,6 @@ def part_1(data):
         n_steps += 1
     return n_steps
 
-def prime_factors(n):
-    i = 2
-    factors = []
-    while i * i <= n:
-        if n % i:
-            i += 1
-        else:
-            n //= i
-            factors.append(i)
-    if n > 1:
-        factors.append(n)
-    return factors
-
 def part_2(data):
     moves = data['moves']
     nodes = data['nodes']
@@ -36,7 +24,6 @@ def part_2(data):
 
     cycles = []
     for node in current:
-        n_steps = 0
         seen = {}
         current = node
         start = None
@@ -46,15 +33,15 @@ def part_2(data):
             current = nodes[current][step]
             if (current, step_idx) in seen:
                 start = seen[(current, step_idx)]
-                cycle_steps = n_steps + 1 - start
+                cycle_steps = idx + 1 - start
                 break
-            n_steps += 1
+            idx += 1
             if current[-1] == 'Z':
-                seen[(current, step_idx)] = n_steps
-        cycles.append(start//271) # start == cycle_steps, GCD for all cycles = 271
+                seen[(current, step_idx)] = idx
+        cycles.append(start) # start == cycle_steps, GCD for all cycles = 271
 
         
-    return reduce(lambda prev, cur: prev*cur, cycles)*271
+    return math.lcm(*cycles)
 
 def parse_data():
     data = {
