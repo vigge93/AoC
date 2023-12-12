@@ -1,5 +1,4 @@
 import time
-from collections import namedtuple
 from itertools import combinations
 from functools import cache
 
@@ -47,7 +46,6 @@ def parse_data():
             for x, spot in enumerate(line.strip()):
                 if spot == "#":
                     data.add((x, y))
-
     return data
 
 if __name__ == '__main__':
