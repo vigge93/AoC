@@ -1,11 +1,13 @@
 import time
 from copy import deepcopy
 from functools import cache
+from multiprocessing import Pool
+
 
 day = 12
 
 @cache
-def recurse_memoize(springs, schematic):
+def recurse_memoize(springs, schematic) -> int:
     if not schematic:
         for springIdx in range(len(springs)):
             spring = springs[springIdx]
@@ -53,11 +55,9 @@ def part_1(data):
     return s
 
 def part_2(data):
-    s = 0
-    for springs, schematic in data['part2']:
-        r =  recurse_memoize(tuple(springs), tuple(schematic))  
-        s += r
-    return s
+    p = Pool()
+    sums = p.starmap(recurse_memoize, data['part2'])  
+    return sum(sums)
 
 def parse_data():
     data = {
