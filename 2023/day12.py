@@ -1,52 +1,43 @@
 import time
-from copy import deepcopy
 from functools import cache
 from multiprocessing import Pool
-
 
 day = 12
 
 @cache
 def recurse_memoize(springs, schematic) -> int:
     if not schematic:
-        for springIdx in range(len(springs)):
-            spring = springs[springIdx]
-            for subSpringIdx in range(len(spring)):
-                if spring[subSpringIdx] == '#':
-                    return 0
-        return 1
+        return not any(map(lambda s: '#' in s, springs))
     next_schematic = schematic[0]
-    found = False
     s = 0
-    # Find empty spot for next spring:
     prev_s = '.'
-    for springIdx in range(len(springs)):
-        spring = springs[springIdx]
-        if len(spring) < next_schematic:
+    break_all = False
+    # Find empty spot for next spring:
+    for springIdx, spring in enumerate(springs):
+        if break_all:
+            break
+        spring_len = len(spring)
+        if spring_len < next_schematic:
             if "#" in spring:
                 break
             continue
-        for subSpringIdx in range(len(spring)):
-            if (len(spring) - subSpringIdx) < next_schematic:
+        for subSpringIdx in range(spring_len):
+            if (spring_len - subSpringIdx) < next_schematic:
                 prev_s = spring[subSpringIdx]
                 break
             if prev_s == '#':
+                break_all = True
                 break
-            if (len(spring) - subSpringIdx) >= next_schematic + 1 and spring[subSpringIdx + next_schematic] == '#':
+            if any(map(lambda s: '#' in s, springs[:springIdx])):
+                break_all = True
+                break
+            if (spring_len - subSpringIdx) >= next_schematic + 1 and spring[subSpringIdx + next_schematic] == '#':
                 prev_s = spring[subSpringIdx]
                 continue
             prev_s = spring[subSpringIdx]
-            if any(map(lambda s: '#' in s, springs[:springIdx])):
-                prev_s = "#"
-                break
-            found = True
-            new_springs = deepcopy(springs)
-            new_springs = (new_springs[springIdx][subSpringIdx+next_schematic+1:],) + new_springs[springIdx+1:]
+            new_springs = (springs[springIdx][subSpringIdx+next_schematic+1:], *springs[springIdx+1:])
             s += recurse_memoize(new_springs, schematic[1:])
-    if not found:
-        return 0
-    else:
-        return s
+    return s
 
 def part_1(data):
     s = 0
@@ -55,8 +46,8 @@ def part_1(data):
     return s
 
 def part_2(data):
-    p = Pool()
-    sums = p.starmap(recurse_memoize, data['part2'])  
+    with Pool() as p:
+        sums = p.starmap(recurse_memoize, data['part2'])  
     return sum(sums)
 
 def parse_data():
@@ -73,8 +64,8 @@ def parse_data():
             springs_1 = springs_1.strip().strip('.').split('.')
             schematic_2 = tuple([int(n) for n in schematic_2.split(',')])
             springs_2 = springs_2.strip().strip('.').split('.')
-            data['part1'].append((tuple([tuple(spring) for spring in springs_1 if spring]), schematic_1))
-            data['part2'].append((tuple([tuple(spring) for spring in springs_2 if spring]), schematic_2))
+            data['part1'].append((tuple([spring for spring in springs_1 if spring]), schematic_1))
+            data['part2'].append((tuple([spring for spring in springs_2 if spring]), schematic_2))
     return data
 
 if __name__ == '__main__':
