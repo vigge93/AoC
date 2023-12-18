@@ -1,5 +1,7 @@
 import time
 from dataclasses import dataclass
+from multiprocessing import Pool
+from functools import partial
 
 @dataclass
 class Obstacle:
@@ -85,51 +87,29 @@ def energize_counter(beam: tuple[int, int, str], energized: set[tuple[int, int, 
 
 def part_1(data):
     beam = (-1, 0, 'e')
+    return run(beam, data)
+    
+def run(beam: tuple[int, int, str], data):
     energized = set()
     energize_counter(beam, energized, data)
     distinct_energised = set()
     for energize in energized:
         distinct_energised.add((energize[0], energize[1]))
     return len(distinct_energised) - 1
-    
+
 def part_2(data):
     max_e = -1
-    for y in range(0, max(data['e']) + 1):
-        beam = (-1, y, 'e')
-        energized = set()
-        energize_counter(beam, energized, data)
-        distinct_energised = set()
-        for energize in energized:
-            distinct_energised.add((energize[0], energize[1]))
-        if len(distinct_energised) - 1 > max_e:
-            max_e = len(distinct_energised) - 1
-    for y in range(0, max(data['w']) + 1):
-        beam = (max(data['n']) + 1, y, 'w')
-        energized = set()
-        energize_counter(beam, energized, data)
-        distinct_energised = set()
-        for energize in energized:
-            distinct_energised.add((energize[0], energize[1]))
-        if len(distinct_energised) - 1 > max_e:
-            max_e = len(distinct_energised) - 1
-    for x in range(0, max(data['s']) + 1):
-        beam = (x, -1, 's')
-        energized = set()
-        energize_counter(beam, energized, data)
-        distinct_energised = set()
-        for energize in energized:
-            distinct_energised.add((energize[0], energize[1]))
-        if len(distinct_energised) - 1 > max_e:
-            max_e = len(distinct_energised) - 1
-    for x in range(0, max(data['n']) + 1):
-        beam = (x, max(data['e']) + 1, 'n')
-        energized = set()
-        energize_counter(beam, energized, data)
-        distinct_energised = set()
-        for energize in energized:
-            distinct_energised.add((energize[0], energize[1]))
-        if len(distinct_energised) - 1 > max_e:
-            max_e = len(distinct_energised) - 1
+    run_part = partial(run, data=data)
+    beams = []
+    max_x = max(data['n'])
+    max_y = max(data['e'])
+    beams += [(-1, y, 'e') for y in range(0, max_y + 1)]
+    beams += [(max_x + 1, y, 'w') for y in range(0, max_y + 1)]
+    beams += [(x, -1, 's') for x in range(0, max_x + 1)]
+    beams += [(x, max_y + 1, 'n') for x in range(0, max_x + 1)]
+
+    with Pool() as p:
+        max_e = max(p.imap_unordered(run_part, beams, 16))
     return max_e
 
 def parse_data():
