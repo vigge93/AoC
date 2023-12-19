@@ -1,15 +1,21 @@
 import time
+from typing import TypedDict
 
 day = dayT
 
-def part_1(data):
+class DataDict(TypedDict):
     pass
 
-def part_2(data):
+type Data = list # DataDict
+
+def part_1(data: Data):
+    pass
+
+def part_2(data: Data):
     pass
 
 def parse_data():
-    data = []
+    data: Data = []
     with open(f'day{day}.txt', 'r') as f:
         pass
     return data
