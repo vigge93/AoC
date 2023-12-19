@@ -3,6 +3,7 @@ from functools import reduce
 
 day = 15
 
+
 def hash_str(string):
     hash_ = 0
     for char in string:
@@ -11,19 +12,21 @@ def hash_str(string):
     hash_ %= 256
     return hash_
 
+
 def part_1(data):
     return sum(map(hash_str, data))
+
 
 def part_2(data):
     boxes = {}
     for step in data:
-        if '-' in step:
+        if "-" in step:
             label = step[:-1]
             box = hash_str(label)
             if box in boxes and label in boxes[box]:
                 del boxes[box][label]
         else:
-            label, lens = step.split('=')
+            label, lens = step.split("=")
             box = hash_str(label)
             lens = int(lens)
             if box not in boxes:
@@ -38,12 +41,13 @@ def part_2(data):
 
 def parse_data():
     data = []
-    with open(f'day{day}.txt', 'r') as f:
+    with open(f"day{day}.txt", "r") as f:
         line = f.readline()
-        data = line.split(',')
+        data = line.split(",")
     return data
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     start_time = time.perf_counter_ns()
     data = parse_data()
     data_time = time.perf_counter_ns()
@@ -51,11 +55,13 @@ if __name__ == '__main__':
     p1_time = time.perf_counter_ns()
     p2 = part_2(data)
     end_time = time.perf_counter_ns()
-    print(f'''=== Day {day:02} ===\n'''
-    f'''  · Loading data\n'''
-    f'''  · Elapsed: {(data_time - start_time)/10**6:.3f} ms\n\n'''
-    f'''  · Part 1: {p1}\n'''
-    f'''  · Elapsed: {(p1_time - data_time)/10**6:.3f} ms\n\n'''
-    f'''  · Part 2: {p2}\n'''
-    f'''  · Elapsed: {(end_time - p1_time)/10**6:.3f} ms\n\n'''
-    f'''  · Total elapsed: {(end_time - start_time)/10**6:.3f} ms''')
+    print(
+        f"""=== Day {day:02} ===\n"""
+        f"""  · Loading data\n"""
+        f"""  · Elapsed: {(data_time - start_time)/10**6:.3f} ms\n\n"""
+        f"""  · Part 1: {p1}\n"""
+        f"""  · Elapsed: {(p1_time - data_time)/10**6:.3f} ms\n\n"""
+        f"""  · Part 2: {p2}\n"""
+        f"""  · Elapsed: {(end_time - p1_time)/10**6:.3f} ms\n\n"""
+        f"""  · Total elapsed: {(end_time - start_time)/10**6:.3f} ms"""
+    )
