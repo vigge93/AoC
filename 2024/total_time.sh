@@ -1,0 +1,1 @@
+./all.sh $1 > tmp && grep -oE "Total elapsed:.*?([0-9.]*)ms" tmp | sed -E 's/[^0-9.]+//g' | awk '{s+=$1} END {print s}' && rm tmp
