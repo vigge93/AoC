@@ -45,7 +45,7 @@ def parse_data():
             line = line.strip()
             game = {}
             id, cubes = line.split(":")
-            game["id"] = int(id)
+            game["id"] = int(id.removeprefix("Game "))
             game["rounds"] = []
             rounds = cubes.split(";")
             for round in rounds:
