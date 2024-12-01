@@ -24,8 +24,8 @@ def part_1(data: Data):
 
 
 def part_2(data: Data):
-    x_lst = sorted(data["x"])
-    y_lst = sorted(data["y"])
+    x_lst = data["x"]
+    y_lst = data["y"]
     y_cnt = Counter(y_lst)
     s = 0
     for number in x_lst:
@@ -39,7 +39,7 @@ def parse_data(file: str):
     y_lst = []
     with open(file, "r") as f:
         for line in f:
-            x, y = line.strip().split("   ")
+            x, y = line.strip().split()
             x_lst.append(int(x))
             y_lst.append(int(y))
     data["x"] = x_lst
