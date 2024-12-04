@@ -34,14 +34,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     if args.test:
-        if part_1_example_answer is not None:
+        if part_1_example_answer is not None: # type: ignore
             data = parse_data(f"day{day}.xexample-1.txt")
             p1 = part_1(data)
             if p1 != part_1_example_answer:
                 print(f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}")
             else:
                 print("Example part 1 passed!")
-        if part_2_example_answer is not None:
+        if part_2_example_answer is not None: # type: ignore
             data = parse_data(f"day{day}.xexample-2.txt")
             p2 = part_2(data)
             if p2 != part_2_example_answer:
