@@ -38,7 +38,7 @@ def part_1(data: Data):
             guard = next_pos
     return len(visited)
 
-def part_2(data: Data):    
+def part_2(data: Data):
     blocks_x = data["blocks_x"]
     blocks_y = data["blocks_y"]
     grid = data["grid"]
@@ -54,6 +54,11 @@ def part_2(data: Data):
         else:
             guard = next_pos
     
+    north_cache: dict[tuple[int, int], int] = {}
+    east_cache: dict[tuple[int, int], int] = {}
+    south_cache: dict[tuple[int, int], int] = {}
+    west_cache: dict[tuple[int, int], int] = {}
+    hits, misses = 0, 0
     s = 0
     for block in orig_visited:
         guard = data["guard"]
@@ -70,23 +75,64 @@ def part_2(data: Data):
                 break
             visited[guard].add(direction)
             if direction == Dir.NORTH:
-                next_block = max([block for block in blocks_x[guard[0]] if block < guard[1]], default=-2)
-                guard = (guard[0], next_block + 1)
+                if block[0] != guard[0]:
+                    if guard in north_cache:
+                        hits += 1
+                        guard = (guard[0], north_cache[guard])
+                    else:
+                        misses += 1
+                        next_block = max([block for block in blocks_x[guard[0]] if block < guard[1]], default=-2)
+                        north_cache[guard] = next_block + 1
+                        guard = (guard[0], next_block + 1)
+                else:
+                    next_block = max([block for block in blocks_x[guard[0]] if block < guard[1]], default=-2)
+                    guard = (guard[0], next_block + 1)
             elif direction == Dir.EAST:
-                next_block = min([block for block in blocks_y[guard[1]] if block > guard[0]], default=-2)
-                guard = (next_block - 1, guard[1])
+                if block[1] != guard[1]:
+                    if guard in east_cache:
+                        hits += 1
+                        guard = (east_cache[guard], guard[1])
+                    else:
+                        misses += 1
+                        next_block = min([block for block in blocks_y[guard[1]] if block > guard[0]], default=-2)
+                        east_cache[guard] = next_block - 1
+                        guard = (next_block - 1, guard[1])
+                else:
+                    next_block = min([block for block in blocks_y[guard[1]] if block > guard[0]], default=-2)
+                    guard = (next_block - 1, guard[1])
             elif direction == Dir.SOUTH:
-                next_block = min([block for block in blocks_x[guard[0]] if block > guard[1]], default=-2)
-                guard = (guard[0], next_block - 1)
+                if block[0] != guard[0]:
+                    if guard in south_cache:
+                        hits += 1
+                        guard = (guard[0], south_cache[guard])
+                    else:
+                        misses += 1
+                        next_block = min([block for block in blocks_x[guard[0]] if block > guard[1]], default=-2)
+                        south_cache[guard] = next_block - 1
+                        guard = (guard[0], next_block - 1)
+                else:
+                    next_block = min([block for block in blocks_x[guard[0]] if block > guard[1]], default=-2)
+                    guard = (guard[0], next_block - 1)
             elif direction == Dir.WEST:
-                next_block = max([block for block in blocks_y[guard[1]] if block < guard[0]], default=-2)
-                guard = (next_block + 1, guard[1])
+                if block[1] != guard[1]:
+                    if guard in west_cache:
+                        hits += 1
+                        guard = (west_cache[guard], guard[1])
+                    else:
+                        misses += 1
+                        next_block = max([block for block in blocks_y[guard[1]] if block < guard[0]], default=-2)
+                        west_cache[guard] = next_block + 1
+                        guard = (next_block + 1, guard[1])
+                else:
+                    next_block = max([block for block in blocks_y[guard[1]] if block < guard[0]], default=-2)
+                    guard = (next_block + 1, guard[1])
 
-            direction = Dir((direction + 1) % 4)
+            direction = (direction + 1) % 4
 
         if changed:
             blocks_x[block[0]].remove(block[1])
             blocks_y[block[1]].remove(block[0])
+
     return s
 
 direction_mapping = {
