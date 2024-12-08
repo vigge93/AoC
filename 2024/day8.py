@@ -1,29 +1,65 @@
 import time
 from typing import TypedDict
 from argparse import ArgumentParser, BooleanOptionalAction
+from collections import defaultdict
+from itertools import combinations
+from math import gcd
 
-day = dayT
-part_1_example_answer: int | None = None
-part_2_example_answer: int | None = None
+day = 8
+part_1_example_answer: int | None = 14
+part_2_example_answer: int | None = 34
 
 
 class DataDict(TypedDict):
-    pass
-Data = list # DataDict
+    map: set[tuple[int, int]]
+    frequencies: defaultdict[str, set[tuple[int, int]]]
+Data = DataDict
 
 
 def part_1(data: Data):
-    pass
-
+    frequencies = data["frequencies"]
+    anti_nodes: set[tuple[int, int]] = set()
+    
+    for frequency in frequencies:
+        for (x1, y1), (x2, y2) in combinations(frequencies[frequency], 2):
+            diff_x, diff_y = (x2-x1, y2-y1)
+            anti_node_1 = (x2 + diff_x, y2 + diff_y)
+            anti_node_2 = (x1 - diff_x, y1 - diff_y)
+            if anti_node_1 in data["map"]:
+                anti_nodes.add(anti_node_1)
+            if anti_node_2 in data["map"]:
+                anti_nodes.add(anti_node_2)
+    return len(anti_nodes)
 
 def part_2(data: Data):
-    pass
+    frequencies = data["frequencies"]
+    anti_nodes: set[tuple[int, int]] = set()
+    
+    for frequency in frequencies:
+        for (x1, y1), (x2, y2) in combinations(frequencies[frequency], 2):
+            diff_x, diff_y = (x2-x1, y2-y1)
+            div = gcd(diff_x, diff_y)
+            diff_x, diff_y = diff_x/div, diff_y/div
+            anti_node_1 = (x2, y2)
+            anti_node_2 = (x1, y1)
+            while anti_node_1 in data["map"]:
+                anti_nodes.add(anti_node_1)
+                anti_node_1 = (anti_node_1[0] + diff_x, anti_node_1[1] + diff_y)
+            while anti_node_2 in data["map"]:
+                anti_nodes.add(anti_node_2)
+                anti_node_2 = (anti_node_2[0] - diff_x, anti_node_2[1] - diff_y)
+
+    return len(anti_nodes)
 
 
 def parse_data(file: str):
-    data: Data = []
+    data: Data = {"frequencies": defaultdict(set), "map": set()}
     with open(file, "r") as f:
-        pass
+        for y, line in enumerate(f):
+            for x, pos in enumerate(line.strip()):
+                data["map"].add((x, y))
+                if pos != ".":
+                    data["frequencies"][pos].add((x, y))
     return data
 
 
