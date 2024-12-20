@@ -1,3 +1,4 @@
+#!/bin/pypy3
 import time
 from typing import TypedDict
 from argparse import ArgumentParser, BooleanOptionalAction
@@ -15,7 +16,7 @@ class DataDict(TypedDict):
     blocks_x: defaultdict[int, set[int]]
     blocks_y: defaultdict[int, set[int]]
 
-type Data = DataDict
+Data = DataDict
 
 class Dir(IntEnum):
     NORTH = 0

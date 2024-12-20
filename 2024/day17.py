@@ -1,3 +1,4 @@
+#!/bin/python
 import time
 from typing import TypedDict, Callable
 from argparse import ArgumentParser, BooleanOptionalAction
