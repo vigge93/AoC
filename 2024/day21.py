@@ -2,10 +2,11 @@
 import time
 from argparse import ArgumentParser, BooleanOptionalAction
 from enum import Enum, IntEnum, auto
+from functools import cache
 
 day = 21
 part_1_example_answer: int | None = 126384
-part_2_example_answer: int | None = None
+part_2_example_answer: int | None = 154115708116294
 
 class DirectionKeys(Enum):
     UP = auto()
@@ -88,6 +89,7 @@ num_keymap = {
 }
 
 Data = list[str] # DataDict
+    
 
 def move_numeric(key_from: NumKeys, key_to: NumKeys):
     key_to_coord = num_keymap[key_to]
@@ -129,6 +131,22 @@ def move_directional(key_from: DirectionKeys, key_to: DirectionKeys):
     cost, sequences = direction_key_map[key_from][key_to]
     return cost, sequences
 
+@cache
+def move_direction(current: DirectionKeys, target: DirectionKeys, depth: int) -> int:
+    if depth == 0:
+        return 1
+    _, move_seq = move_directional(current, target)
+    best_cost: int = -1
+    for alternative in move_seq:
+        cost = 0
+        prev = DirectionKeys.A
+        for move in alternative:
+            cost += move_direction(prev, move, depth - 1)
+            prev = move
+        if best_cost == -1 or cost < best_cost:
+            best_cost = cost
+    return best_cost
+
 print_map = {
     DirectionKeys.A: "A",
     DirectionKeys.UP: "^",
@@ -139,8 +157,6 @@ print_map = {
 
 def part_1(data: Data):
     numerical_robot = NumKeys.A
-    directional_robot_1 = DirectionKeys.A
-    directional_robot_2 = DirectionKeys.A
     s = 0
     for keypad in data:
         tot_cost = 0
@@ -150,52 +166,47 @@ def part_1(data: Data):
             else:
                 key = NumKeys(int(k))
             num_sequences = move_numeric(numerical_robot, key)
-            best_cost: int | None = None
-            best_sequences: list[list[set[tuple[DirectionKeys, ...]]]] = []
-            for n_sequence in num_sequences:
-                seq_cost = 0
-                seq: list[set[tuple[DirectionKeys, ...]]] = []
-                t_robot_1 = directional_robot_1
-                for move in n_sequence:
-                    cost, dir_sequences = move_directional(t_robot_1, move)
-                    seq.append(dir_sequences)
-                    seq_cost += cost
-                    t_robot_1 = move
-                if best_cost is None or seq_cost <= best_cost:
-                    best_cost = seq_cost
-                    best_sequences.append(seq)
-                
-            best_tot = None    
-            for best_sequence in best_sequences:
-                tot = 0
-                for next_key in best_sequence:
-                    best_cost: int | None = None
-                    for alternative in next_key:
-                        cost = 0
-                        t_robot_2 = directional_robot_2
-                        for move in alternative:
-                            m_cost, dir_sequences = move_directional(t_robot_2, move)
-                            cost += m_cost
-                            t_robot_2 = move
-                        if best_cost is None or cost < best_cost:
-                            best_cost = cost
-                    if best_cost is None:
-                        print("Error!")
-                        return
-                    tot += best_cost
-                if best_tot is None or tot < best_tot:
-                    best_tot = tot
-            if best_tot is None:
-                print("Error!")
-                return
-            tot_cost += best_tot
-    
+            best_cost = -1
+            for alternative in num_sequences:
+                cost = 0
+                prev = DirectionKeys.A
+                for move in alternative:
+                    cost += move_direction(prev, move, 2)
+                    prev = move
+                if best_cost == -1 or cost < best_cost:
+                    best_cost = cost
+            tot_cost += best_cost    
             numerical_robot = key
         s += tot_cost * int(keypad.removesuffix("A"))
     return s
 
+
 def part_2(data: Data):
-    pass
+    numerical_robot = NumKeys.A
+    s = 0
+    for keypad in data:
+        tot_cost = 0
+        for k in keypad:
+            if k == "A":
+                key = NumKeys.A
+            else:
+                key = NumKeys(int(k))
+            num_sequences = move_numeric(numerical_robot, key)
+            best_cost = -1
+            for alternative in num_sequences:
+                cost = 0
+                prev = DirectionKeys.A
+                for move in alternative:
+                    cost += move_direction(prev, move, 25)
+                    prev = move
+                if best_cost == -1 or cost < best_cost:
+                    best_cost = cost
+            tot_cost += best_cost    
+            numerical_robot = key
+        s += tot_cost * int(keypad.removesuffix("A"))
+    return s
+
+
 
 def parse_data(file: str):
     data: Data = []
