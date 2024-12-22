@@ -1,7 +1,6 @@
 #!/bin/pypy3
 import time
 from argparse import ArgumentParser, BooleanOptionalAction
-from collections import defaultdict
 
 day = 22
 part_1_example_answer: int | None = 37327623
@@ -26,28 +25,25 @@ def part_1(data: Data):
     return s
 
 def part_2(data: Data):
-    bananas: defaultdict[tuple[int, int, int, int], int] = defaultdict(int)
-    for o_secret in data:
-        secret = o_secret
-        secret_bananas = o_secret % 10
-        sequence: list[int] = []
-        seq_len = 0
-        known_seq: set[tuple[int,...]] = set()
-        for _ in range(2000):
-            n_secret = next_secret(secret)
-            n_secret_bananas = n_secret % 10
-            sequence.append(n_secret_bananas - secret_bananas)
-            seq_len += 1
-            if seq_len > 4:
-                del sequence[0]
-                seq_len -= 1
-            if seq_len == 4:
-                if (t_seq := tuple(sequence)) not in known_seq:
-                    known_seq.add(t_seq)
-                    bananas[t_seq] += n_secret_bananas
+    bananas: list[int] = [0] * 2**20
+    known_seq: list[int] = [0] * 2**20
+    k_seq: list[int] = []
+    for secret in data:
+        sequence: int = 0
+        secret = secret
+        secret_bananas = secret % 10
+        for i in range(2000):
+            secret = next_secret(secret)
+            n_secret_bananas = secret % 10
+            sequence = ((sequence << 5) | (n_secret_bananas - secret_bananas + 9)) & 0xfffff
+            if i >= 4 and not known_seq[sequence]:
+                k_seq.append(sequence)
+                known_seq[sequence] = 1
+                bananas[sequence] += n_secret_bananas
             secret_bananas = n_secret_bananas
-            secret = n_secret
-    return max(bananas.values())
+        while k_seq:
+            known_seq[k_seq.pop()] = 0
+    return max(bananas)
 
 
 def parse_data(file: str):
