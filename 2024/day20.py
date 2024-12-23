@@ -1,8 +1,8 @@
 #!/bin/pypy3
 import time
-from typing import TypedDict
 from argparse import ArgumentParser, BooleanOptionalAction
 from itertools import combinations
+from typing import TypedDict
 
 day = 20
 part_1_example_answer: int | None = 0
@@ -13,6 +13,7 @@ class DataDict(TypedDict):
     track: set[tuple[int, int]]
     start: tuple[int, int]
     end: tuple[int, int]
+
 
 Data = DataDict
 
@@ -52,6 +53,7 @@ def part_1(data: Data):
             continue
         s += 1
     return s
+
 
 def part_1_and_2(data: Data):
     distances: dict[tuple[int, int], int] = {}
@@ -111,22 +113,26 @@ def parse_data(file: str):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--test", action=BooleanOptionalAction, default=False)
-    
+
     args = parser.parse_args()
-    
+
     if args.test:
-        if part_1_example_answer is not None: # type: ignore
+        if part_1_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-1.txt")
             p1 = part_1(data)
             if p1 != part_1_example_answer:
-                print(f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}")
+                print(
+                    f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}"
+                )
             else:
                 print("Example part 1 passed!")
-        if part_2_example_answer is not None: # type: ignore
+        if part_2_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-2.txt")
             p2 = part_2(data)
             if p2 != part_2_example_answer:
-                print(f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}")
+                print(
+                    f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}"
+                )
             else:
                 print("Example part 2 passed!")
     else:

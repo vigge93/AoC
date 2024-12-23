@@ -1,9 +1,8 @@
 #!/bin/python
 import time
-from typing import TypedDict
 from argparse import ArgumentParser, BooleanOptionalAction
 from functools import cache
-
+from typing import TypedDict
 
 day = 10
 part_1_example_answer: int | None = 36
@@ -14,7 +13,10 @@ class DataDict(TypedDict):
     grid: dict[tuple[int, int], int]
     heads: set[tuple[int, int]]
     tails: set[tuple[int, int]]
+
+
 Data = DataDict
+
 
 def floodfill_factory(grid: dict[tuple[int, int], int]):
 
@@ -27,12 +29,13 @@ def floodfill_factory(grid: dict[tuple[int, int], int]):
             node = (current[0] + i, current[1])
             if node in grid and grid[current] == grid[node] - 1:
                 s += floodfill(node, goal)
-            node = (current[0], current[1]+i)
+            node = (current[0], current[1] + i)
             if node in grid and grid[current] == grid[node] - 1:
                 s += floodfill(node, goal)
         return s
 
     return floodfill
+
 
 def part_1(data: Data):
     s = 0
@@ -41,6 +44,7 @@ def part_1(data: Data):
             if ffill(head, tail):
                 s += 1
     return s
+
 
 def part_2(data: Data):
     s = 0
@@ -68,22 +72,26 @@ def parse_data(file: str):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--test", action=BooleanOptionalAction, default=False)
-    
+
     args = parser.parse_args()
-    
+
     if args.test:
-        if part_1_example_answer is not None: # type: ignore
+        if part_1_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-1.txt")
             p1 = part_1(data)
             if p1 != part_1_example_answer:
-                print(f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}")
+                print(
+                    f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}"
+                )
             else:
                 print("Example part 1 passed!")
-        if part_2_example_answer is not None: # type: ignore
+        if part_2_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-2.txt")
             p2 = part_2(data)
             if p2 != part_2_example_answer:
-                print(f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}")
+                print(
+                    f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}"
+                )
             else:
                 print("Example part 2 passed!")
     else:

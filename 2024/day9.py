@@ -1,8 +1,8 @@
 #!/bin/pypy3
 import time
-from typing import TypedDict
 from argparse import ArgumentParser, BooleanOptionalAction
 from copy import deepcopy
+from typing import TypedDict
 
 day = 9
 part_1_example_answer: int | None = 1928
@@ -14,10 +14,12 @@ class DataDict(TypedDict):
     size: int
     val: int
 
+
 class DataDict2(TypedDict):
     memory: dict[int, DataDict]
     free: list[int]
     allocated: list[int]
+
 
 Data = DataDict2
 
@@ -40,7 +42,7 @@ def part_1(data: Data):
             if next_mem["size"] == 0:
                 next_mem["val"] = FREE_ID
                 allocated.pop()
-        else: # next_free["size"] > next_mem["size"]
+        else:  # next_free["size"] > next_mem["size"]
             new_free_addr = next_free["start"] + next_mem["size"]
             new_free_size = next_free["size"] - next_mem["size"]
             next_free["size"] = next_mem["size"]
@@ -48,7 +50,7 @@ def part_1(data: Data):
             memory[new_free_addr] = {
                 "start": new_free_addr,
                 "size": new_free_size,
-                "val": FREE_ID
+                "val": FREE_ID,
             }
             next_mem["val"] = FREE_ID
             allocated.pop()
@@ -60,6 +62,7 @@ def part_1(data: Data):
             continue
         s += mem["val"] * mem["size"] * (2 * mem["start"] + mem["size"] - 1) // 2
     return s
+
 
 def part_2(data: Data):
     memory = data["memory"]
@@ -73,12 +76,12 @@ def part_2(data: Data):
                 break
             if next_mem["size"] > next_free["size"]:
                 continue
-            
+
             if next_mem["size"] == next_free["size"]:
                 next_free["val"] = next_mem["val"]
                 next_mem["val"] = FREE_ID
                 free.pop(next_free_idx)
-            else: # next_mem["size"] < next_free["size"]
+            else:  # next_mem["size"] < next_free["size"]
                 new_free_addr = next_free["start"] + next_mem["size"]
                 new_free_size = next_free["size"] - next_mem["size"]
                 next_free["size"] = next_mem["size"]
@@ -86,7 +89,7 @@ def part_2(data: Data):
                 memory[new_free_addr] = {
                     "start": new_free_addr,
                     "size": new_free_size,
-                    "val": FREE_ID
+                    "val": FREE_ID,
                 }
                 next_mem["val"] = FREE_ID
                 free[next_free_idx] = new_free_addr
@@ -101,11 +104,7 @@ def part_2(data: Data):
 
 
 def parse_data(file: str):
-    data: Data = {
-        "memory": {},
-        "free": [],
-        "allocated": []
-    }
+    data: Data = {"memory": {}, "free": [], "allocated": []}
     i = 0
     id = 0
     address = 0
@@ -115,20 +114,16 @@ def parse_data(file: str):
             if size == 0:
                 i += 1
                 continue
-            if i % 2 == 0: # allocated
+            if i % 2 == 0:  # allocated
                 val = id
                 id += 1
                 if size > 0:
                     data["allocated"].append(address)
-            else: # free
+            else:  # free
                 data["free"].append(address)
                 val = FREE_ID
 
-            data["memory"][address] = {
-                "start": address,
-                "size": size,
-                "val": val
-            }
+            data["memory"][address] = {"start": address, "size": size, "val": val}
             address += size
             i += 1
     return data
@@ -137,22 +132,26 @@ def parse_data(file: str):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--test", action=BooleanOptionalAction, default=False)
-    
+
     args = parser.parse_args()
-    
+
     if args.test:
-        if part_1_example_answer is not None: # type: ignore
+        if part_1_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-1.txt")
             p1 = part_1(data)
             if p1 != part_1_example_answer:
-                print(f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}")
+                print(
+                    f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}"
+                )
             else:
                 print("Example part 1 passed!")
-        if part_2_example_answer is not None: # type: ignore
+        if part_2_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-2.txt")
             p2 = part_2(data)
             if p2 != part_2_example_answer:
-                print(f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}")
+                print(
+                    f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}"
+                )
             else:
                 print("Example part 2 passed!")
     else:

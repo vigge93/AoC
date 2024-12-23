@@ -1,8 +1,8 @@
 #!/bin/pypy3
-import time
-from typing import TypedDict
-from argparse import ArgumentParser, BooleanOptionalAction
 import re
+import time
+from argparse import ArgumentParser, BooleanOptionalAction
+from typing import TypedDict
 
 day = 14
 part_1_example_answer: int | None = 12
@@ -10,9 +10,13 @@ part_2_example_answer: int | None = None
 
 testing = False
 
+
 class DataDict(TypedDict):
     pass
-Data = set[tuple[tuple[int, int], tuple[int, int]]] # DataDict
+
+
+Data = set[tuple[tuple[int, int], tuple[int, int]]]  # DataDict
+
 
 def print_grid(data: Data):
     max_x = max([x for (x, _), _ in data])
@@ -22,6 +26,7 @@ def print_grid(data: Data):
         grid[y][x] = "#"
     grid = ["".join(row) for row in grid]
     print(*grid, sep="\n")
+
 
 def part_1(data: Data):
     w = 101
@@ -50,7 +55,8 @@ def part_1(data: Data):
                 q3 += 1
             if y > h // 2:
                 q4 += 1
-    return q1*q2*q3*q4
+    return q1 * q2 * q3 * q4
+
 
 def part_2(data: Data):
     w = 101
@@ -98,23 +104,27 @@ def parse_data(file: str):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--test", action=BooleanOptionalAction, default=False)
-    
+
     args = parser.parse_args()
-    
+
     if args.test:
         testing = True
-        if part_1_example_answer is not None: # type: ignore
+        if part_1_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-1.txt")
             p1 = part_1(data)
             if p1 != part_1_example_answer:
-                print(f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}")
+                print(
+                    f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}"
+                )
             else:
                 print("Example part 1 passed!")
-        if part_2_example_answer is not None: # type: ignore
+        if part_2_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-2.txt")
             p2 = part_2(data)
             if p2 != part_2_example_answer:
-                print(f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}")
+                print(
+                    f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}"
+                )
             else:
                 print("Example part 2 passed!")
     else:

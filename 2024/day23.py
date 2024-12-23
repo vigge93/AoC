@@ -10,9 +10,10 @@ part_2_example_answer: str | None = "co,de,ka,ta"
 
 Data = defaultdict[str, set[str]]
 
+
 def bron_kerbosch_factory(data: Data):
     maximal_cliques: list[set[str]] = []
-    
+
     def bron_kerbosch(R: set[str], P: set[str], X: set[str]):
         if not P and not X:
             maximal_cliques.append(R)
@@ -27,6 +28,7 @@ def bron_kerbosch_factory(data: Data):
 
     return bron_kerbosch, maximal_cliques
 
+
 def part_1(data: Data):
     lans: set[frozenset[str]] = set()
     for computer in data:
@@ -34,9 +36,9 @@ def part_1(data: Data):
             common = data[computer] & data[computer2]
             if len(common):
                 for computer3 in common:
-                    if 't' in (computer[0], computer2[0], computer3[0]):
+                    if "t" in (computer[0], computer2[0], computer3[0]):
                         lans.add(frozenset([computer, computer2, computer3]))
-    return len(lans)    
+    return len(lans)
 
 
 def part_2(data: Data):
@@ -50,7 +52,7 @@ def parse_data(file: str):
     data: Data = defaultdict(set)
     with open(file, "r") as f:
         for line in f:
-            comp1, comp2 = line.strip().split('-')
+            comp1, comp2 = line.strip().split("-")
             data[comp1].add(comp2)
             data[comp2].add(comp1)
     return data
@@ -59,22 +61,26 @@ def parse_data(file: str):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--test", action=BooleanOptionalAction, default=False)
-    
+
     args = parser.parse_args()
-    
+
     if args.test:
-        if part_1_example_answer is not None: # type: ignore
+        if part_1_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-1.txt")
             p1 = part_1(data)
             if p1 != part_1_example_answer:
-                print(f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}")
+                print(
+                    f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}"
+                )
             else:
                 print("Example part 1 passed!")
-        if part_2_example_answer is not None: # type: ignore
+        if part_2_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-2.txt")
             p2 = part_2(data)
             if p2 != part_2_example_answer:
-                print(f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}")
+                print(
+                    f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}"
+                )
             else:
                 print("Example part 2 passed!")
     else:

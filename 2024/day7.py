@@ -1,8 +1,7 @@
 #!/bin/pypy3
 import time
-from typing import TypedDict
 from argparse import ArgumentParser, BooleanOptionalAction
-from typing import Callable
+from typing import Callable, TypedDict
 
 day = 7
 part_1_example_answer: int | None = 3749
@@ -11,11 +10,13 @@ part_2_example_answer: int | None = 11387
 
 class DataDict(TypedDict):
     pass
+
+
 Data = list[tuple[int, list[int]]]
 
 
 def operator_search_factory(operations: list[Callable[[int, int], int]]):
-    
+
     def find_operators(val: int, operators: list[int], target: int) -> bool:
         if not operators:
             return val == target
@@ -27,9 +28,10 @@ def operator_search_factory(operations: list[Callable[[int, int], int]]):
                 if res:
                     return res
         return False
-    
+
     return find_operators
-    
+
+
 def part_1(data: Data):
     s = 0
     add: Callable[[int, int], int] = lambda x, y: x + y
@@ -70,22 +72,26 @@ def parse_data(file: str):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--test", action=BooleanOptionalAction, default=False)
-    
+
     args = parser.parse_args()
-    
+
     if args.test:
-        if part_1_example_answer is not None: # type: ignore
+        if part_1_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-1.txt")
             p1 = part_1(data)
             if p1 != part_1_example_answer:
-                print(f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}")
+                print(
+                    f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}"
+                )
             else:
                 print("Example part 1 passed!")
-        if part_2_example_answer is not None: # type: ignore
+        if part_2_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-2.txt")
             p2 = part_2(data)
             if p2 != part_2_example_answer:
-                print(f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}")
+                print(
+                    f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}"
+                )
             else:
                 print("Example part 2 passed!")
     else:

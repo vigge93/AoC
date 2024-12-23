@@ -1,10 +1,10 @@
 #!/bin/python
 import time
-from typing import TypedDict
 from argparse import ArgumentParser, BooleanOptionalAction
 from collections import defaultdict
 from itertools import combinations
 from math import gcd
+from typing import TypedDict
 
 day = 8
 part_1_example_answer: int | None = 14
@@ -14,16 +14,18 @@ part_2_example_answer: int | None = 34
 class DataDict(TypedDict):
     map: set[tuple[int, int]]
     frequencies: defaultdict[str, set[tuple[int, int]]]
+
+
 Data = DataDict
 
 
 def part_1(data: Data):
     frequencies = data["frequencies"]
     anti_nodes: set[tuple[int, int]] = set()
-    
+
     for frequency in frequencies:
         for (x1, y1), (x2, y2) in combinations(frequencies[frequency], 2):
-            diff_x, diff_y = (x2-x1, y2-y1)
+            diff_x, diff_y = (x2 - x1, y2 - y1)
             anti_node_1 = (x2 + diff_x, y2 + diff_y)
             anti_node_2 = (x1 - diff_x, y1 - diff_y)
             if anti_node_1 in data["map"]:
@@ -32,15 +34,16 @@ def part_1(data: Data):
                 anti_nodes.add(anti_node_2)
     return len(anti_nodes)
 
+
 def part_2(data: Data):
     frequencies = data["frequencies"]
     anti_nodes: set[tuple[int, int]] = set()
-    
+
     for frequency in frequencies:
         for (x1, y1), (x2, y2) in combinations(frequencies[frequency], 2):
-            diff_x, diff_y = (x2-x1, y2-y1)
+            diff_x, diff_y = (x2 - x1, y2 - y1)
             div = gcd(diff_x, diff_y)
-            diff_x, diff_y = diff_x/div, diff_y/div
+            diff_x, diff_y = diff_x / div, diff_y / div
             anti_node_1 = (x2, y2)
             anti_node_2 = (x1, y1)
             while anti_node_1 in data["map"]:
@@ -67,22 +70,26 @@ def parse_data(file: str):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--test", action=BooleanOptionalAction, default=False)
-    
+
     args = parser.parse_args()
-    
+
     if args.test:
-        if part_1_example_answer is not None: # type: ignore
+        if part_1_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-1.txt")
             p1 = part_1(data)
             if p1 != part_1_example_answer:
-                print(f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}")
+                print(
+                    f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}"
+                )
             else:
                 print("Example part 1 passed!")
-        if part_2_example_answer is not None: # type: ignore
+        if part_2_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-2.txt")
             p2 = part_2(data)
             if p2 != part_2_example_answer:
-                print(f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}")
+                print(
+                    f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}"
+                )
             else:
                 print("Example part 2 passed!")
     else:

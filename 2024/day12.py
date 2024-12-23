@@ -1,8 +1,8 @@
 #!/bin/python
 import time
-from typing import TypedDict
 from argparse import ArgumentParser, BooleanOptionalAction
 from collections import defaultdict
+from typing import TypedDict
 
 day = 12
 part_1_example_answer: int | None = 1930
@@ -11,7 +11,10 @@ part_2_example_answer: int | None = 1206
 
 class DataDict(TypedDict):
     pass
-Data = dict[tuple[int, int], str] # DataDict
+
+
+Data = dict[tuple[int, int], str]  # DataDict
+
 
 def floodfill(grid: Data, current: tuple[int, int], visited: set[tuple[int, int]]):
     visited.add(current)
@@ -19,12 +22,14 @@ def floodfill(grid: Data, current: tuple[int, int], visited: set[tuple[int, int]
         node = (current[0] + i, current[1])
         if node in grid and grid[current] == grid[node] and node not in visited:
             visited.update(floodfill(grid, node, visited))
-        node = (current[0], current[1]+i)
+        node = (current[0], current[1] + i)
         if node in grid and grid[current] == grid[node] and node not in visited:
             visited.update(floodfill(grid, node, visited))
     return visited
 
+
 regions: list[set[tuple[int, int]]] = []
+
 
 def part_1(data: Data):
     regions: list[set[tuple[int, int]]] = []
@@ -38,7 +43,7 @@ def part_1(data: Data):
     s = 0
     for region in regions:
         area = len(region)
-        perimeter = area*4
+        perimeter = area * 4
         for field in region:
             for off in (-1, 1):
                 if (field[0] + off, field[1]) in region:
@@ -47,6 +52,7 @@ def part_1(data: Data):
                     perimeter -= 1
         s += area * perimeter
     return s
+
 
 def part_2(data: Data):
     regions: list[set[tuple[int, int]]] = []
@@ -86,8 +92,9 @@ def part_2(data: Data):
                     if new:
                         tot_perimeter += 1
                     perimeters[off].add((field[0], field[1] + off))
-        s += area*tot_perimeter
+        s += area * tot_perimeter
     return s
+
 
 def parse_data(file: str):
     data: Data = {}
@@ -101,22 +108,26 @@ def parse_data(file: str):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--test", action=BooleanOptionalAction, default=False)
-    
+
     args = parser.parse_args()
-    
+
     if args.test:
-        if part_1_example_answer is not None: # type: ignore
+        if part_1_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-1.txt")
             p1 = part_1(data)
             if p1 != part_1_example_answer:
-                print(f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}")
+                print(
+                    f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}"
+                )
             else:
                 print("Example part 1 passed!")
-        if part_2_example_answer is not None: # type: ignore
+        if part_2_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-2.txt")
             p2 = part_2(data)
             if p2 != part_2_example_answer:
-                print(f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}")
+                print(
+                    f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}"
+                )
             else:
                 print("Example part 2 passed!")
     else:

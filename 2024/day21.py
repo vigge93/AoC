@@ -8,12 +8,14 @@ day = 21
 part_1_example_answer: int | None = 126384
 part_2_example_answer: int | None = 154115708116294
 
+
 class DirectionKeys(Enum):
     UP = auto()
     DOWN = auto()
     LEFT = auto()
     RIGHT = auto()
     A = auto()
+
 
 class NumKeys(IntEnum):
     KEY_0 = 0
@@ -28,41 +30,100 @@ class NumKeys(IntEnum):
     KEY_9 = auto()
     A = auto()
 
-direction_key_map: dict[DirectionKeys, dict[DirectionKeys, tuple[int, set[tuple[DirectionKeys, ...]]]]] = {
+
+direction_key_map: dict[
+    DirectionKeys, dict[DirectionKeys, tuple[int, set[tuple[DirectionKeys, ...]]]]
+] = {
     DirectionKeys.UP: {
         DirectionKeys.UP: (1, {(DirectionKeys.A,)}),
-        DirectionKeys.DOWN: (2, {(DirectionKeys.DOWN,DirectionKeys.A)}),
-        DirectionKeys.LEFT: (3, {(DirectionKeys.DOWN, DirectionKeys.LEFT, DirectionKeys.A)}),
-        DirectionKeys.RIGHT: (3, {(DirectionKeys.DOWN, DirectionKeys.RIGHT, DirectionKeys.A), (DirectionKeys.RIGHT, DirectionKeys.DOWN, DirectionKeys.A)}),
+        DirectionKeys.DOWN: (2, {(DirectionKeys.DOWN, DirectionKeys.A)}),
+        DirectionKeys.LEFT: (
+            3,
+            {(DirectionKeys.DOWN, DirectionKeys.LEFT, DirectionKeys.A)},
+        ),
+        DirectionKeys.RIGHT: (
+            3,
+            {
+                (DirectionKeys.DOWN, DirectionKeys.RIGHT, DirectionKeys.A),
+                (DirectionKeys.RIGHT, DirectionKeys.DOWN, DirectionKeys.A),
+            },
+        ),
         DirectionKeys.A: (2, {(DirectionKeys.RIGHT, DirectionKeys.A)}),
     },
     DirectionKeys.DOWN: {
         DirectionKeys.UP: (2, {(DirectionKeys.UP, DirectionKeys.A)}),
-        DirectionKeys.DOWN: (1, {(DirectionKeys.A, )}),
+        DirectionKeys.DOWN: (1, {(DirectionKeys.A,)}),
         DirectionKeys.LEFT: (2, {(DirectionKeys.LEFT, DirectionKeys.A)}),
         DirectionKeys.RIGHT: (2, {(DirectionKeys.RIGHT, DirectionKeys.A)}),
-        DirectionKeys.A: (3, {(DirectionKeys.RIGHT, DirectionKeys.UP, DirectionKeys.A), (DirectionKeys.UP, DirectionKeys.RIGHT, DirectionKeys.A)}),
+        DirectionKeys.A: (
+            3,
+            {
+                (DirectionKeys.RIGHT, DirectionKeys.UP, DirectionKeys.A),
+                (DirectionKeys.UP, DirectionKeys.RIGHT, DirectionKeys.A),
+            },
+        ),
     },
     DirectionKeys.LEFT: {
-        DirectionKeys.UP: (3, {(DirectionKeys.RIGHT, DirectionKeys.UP, DirectionKeys.A)}),
+        DirectionKeys.UP: (
+            3,
+            {(DirectionKeys.RIGHT, DirectionKeys.UP, DirectionKeys.A)},
+        ),
         DirectionKeys.DOWN: (2, {(DirectionKeys.RIGHT, DirectionKeys.A)}),
-        DirectionKeys.LEFT: (1, {(DirectionKeys.A, )}),
-        DirectionKeys.RIGHT: (3, {(DirectionKeys.RIGHT, DirectionKeys.RIGHT, DirectionKeys.A)}),
-        DirectionKeys.A: (4, {(DirectionKeys.RIGHT, DirectionKeys.RIGHT, DirectionKeys.UP, DirectionKeys.A)}),
+        DirectionKeys.LEFT: (1, {(DirectionKeys.A,)}),
+        DirectionKeys.RIGHT: (
+            3,
+            {(DirectionKeys.RIGHT, DirectionKeys.RIGHT, DirectionKeys.A)},
+        ),
+        DirectionKeys.A: (
+            4,
+            {
+                (
+                    DirectionKeys.RIGHT,
+                    DirectionKeys.RIGHT,
+                    DirectionKeys.UP,
+                    DirectionKeys.A,
+                )
+            },
+        ),
     },
     DirectionKeys.RIGHT: {
-        DirectionKeys.UP: (3, {(DirectionKeys.LEFT, DirectionKeys.UP, DirectionKeys.A), (DirectionKeys.UP, DirectionKeys.LEFT, DirectionKeys.A)}),
+        DirectionKeys.UP: (
+            3,
+            {
+                (DirectionKeys.LEFT, DirectionKeys.UP, DirectionKeys.A),
+                (DirectionKeys.UP, DirectionKeys.LEFT, DirectionKeys.A),
+            },
+        ),
         DirectionKeys.DOWN: (2, {(DirectionKeys.LEFT, DirectionKeys.A)}),
-        DirectionKeys.LEFT: (3, {(DirectionKeys.LEFT, DirectionKeys.LEFT, DirectionKeys.A)}),
-        DirectionKeys.RIGHT: (1, {(DirectionKeys.A, )}),
+        DirectionKeys.LEFT: (
+            3,
+            {(DirectionKeys.LEFT, DirectionKeys.LEFT, DirectionKeys.A)},
+        ),
+        DirectionKeys.RIGHT: (1, {(DirectionKeys.A,)}),
         DirectionKeys.A: (2, {(DirectionKeys.UP, DirectionKeys.A)}),
     },
     DirectionKeys.A: {
         DirectionKeys.UP: (2, {(DirectionKeys.LEFT, DirectionKeys.A)}),
-        DirectionKeys.DOWN: (3, {(DirectionKeys.LEFT,DirectionKeys.DOWN, DirectionKeys.A), (DirectionKeys.DOWN,DirectionKeys.LEFT, DirectionKeys.A)}),
-        DirectionKeys.LEFT: (4, {(DirectionKeys.DOWN, DirectionKeys.LEFT, DirectionKeys.LEFT, DirectionKeys.A)}),
+        DirectionKeys.DOWN: (
+            3,
+            {
+                (DirectionKeys.LEFT, DirectionKeys.DOWN, DirectionKeys.A),
+                (DirectionKeys.DOWN, DirectionKeys.LEFT, DirectionKeys.A),
+            },
+        ),
+        DirectionKeys.LEFT: (
+            4,
+            {
+                (
+                    DirectionKeys.DOWN,
+                    DirectionKeys.LEFT,
+                    DirectionKeys.LEFT,
+                    DirectionKeys.A,
+                )
+            },
+        ),
         DirectionKeys.RIGHT: (2, {(DirectionKeys.DOWN, DirectionKeys.A)}),
-        DirectionKeys.A: (1, {(DirectionKeys.A, )}),
+        DirectionKeys.A: (1, {(DirectionKeys.A,)}),
     },
 }
 
@@ -85,16 +146,16 @@ num_keymap = {
     NumKeys.KEY_2: (1, 2),
     NumKeys.KEY_3: (2, 2),
     NumKeys.KEY_0: (1, 3),
-    NumKeys.A: (2, 3)
+    NumKeys.A: (2, 3),
 }
 
-Data = list[str] # DataDict
-    
+Data = list[str]  # DataDict
+
 
 def move_numeric(key_from: NumKeys, key_to: NumKeys):
     key_to_coord = num_keymap[key_to]
     key_from_coord = num_keymap[key_from]
-    sequences: set[tuple[DirectionKeys,...]] = set()
+    sequences: set[tuple[DirectionKeys, ...]] = set()
     x_first_possible = (key_to_coord[0], key_from_coord[1]) in num_keymap.values()
     y_first_possible = (key_from_coord[0], key_to_coord[1]) in num_keymap.values()
     left = key_from_coord[0] > key_to_coord[0]
@@ -104,32 +165,34 @@ def move_numeric(key_from: NumKeys, key_to: NumKeys):
     if x_first_possible:
         n_seq: list[DirectionKeys] = []
         if left:
-            n_seq.extend([DirectionKeys.LEFT]*(key_from_coord[0] - key_to_coord[0]))
+            n_seq.extend([DirectionKeys.LEFT] * (key_from_coord[0] - key_to_coord[0]))
         elif right:
-            n_seq.extend([DirectionKeys.RIGHT]*(key_to_coord[0] - key_from_coord[0]))
+            n_seq.extend([DirectionKeys.RIGHT] * (key_to_coord[0] - key_from_coord[0]))
         if up:
-            n_seq.extend([DirectionKeys.UP]*(key_from_coord[1] - key_to_coord[1]))
+            n_seq.extend([DirectionKeys.UP] * (key_from_coord[1] - key_to_coord[1]))
         elif down:
-            n_seq.extend([DirectionKeys.DOWN]*(key_to_coord[1] - key_from_coord[1]))
+            n_seq.extend([DirectionKeys.DOWN] * (key_to_coord[1] - key_from_coord[1]))
         n_seq.append(DirectionKeys.A)
         sequences.add(tuple(n_seq))
     if y_first_possible:
         n_seq: list[DirectionKeys] = []
         if up:
-            n_seq.extend([DirectionKeys.UP]*(key_from_coord[1] - key_to_coord[1]))
+            n_seq.extend([DirectionKeys.UP] * (key_from_coord[1] - key_to_coord[1]))
         elif down:
-            n_seq.extend([DirectionKeys.DOWN]*(key_to_coord[1] - key_from_coord[1]))
+            n_seq.extend([DirectionKeys.DOWN] * (key_to_coord[1] - key_from_coord[1]))
         if left:
-            n_seq.extend([DirectionKeys.LEFT]*(key_from_coord[0] - key_to_coord[0]))
+            n_seq.extend([DirectionKeys.LEFT] * (key_from_coord[0] - key_to_coord[0]))
         elif right:
-            n_seq.extend([DirectionKeys.RIGHT]*(key_to_coord[0] - key_from_coord[0]))
+            n_seq.extend([DirectionKeys.RIGHT] * (key_to_coord[0] - key_from_coord[0]))
         n_seq.append(DirectionKeys.A)
         sequences.add(tuple(n_seq))
     return sequences
 
+
 def move_directional(key_from: DirectionKeys, key_to: DirectionKeys):
     cost, sequences = direction_key_map[key_from][key_to]
     return cost, sequences
+
 
 @cache
 def move_direction(current: DirectionKeys, target: DirectionKeys, depth: int) -> int:
@@ -147,13 +210,15 @@ def move_direction(current: DirectionKeys, target: DirectionKeys, depth: int) ->
             best_cost = cost
     return best_cost
 
+
 print_map = {
     DirectionKeys.A: "A",
     DirectionKeys.UP: "^",
     DirectionKeys.DOWN: "v",
     DirectionKeys.LEFT: "<",
-    DirectionKeys.RIGHT: ">"
+    DirectionKeys.RIGHT: ">",
 }
+
 
 def part_1(data: Data):
     numerical_robot = NumKeys.A
@@ -175,7 +240,7 @@ def part_1(data: Data):
                     prev = move
                 if best_cost == -1 or cost < best_cost:
                     best_cost = cost
-            tot_cost += best_cost    
+            tot_cost += best_cost
             numerical_robot = key
         s += tot_cost * int(keypad.removesuffix("A"))
     return s
@@ -201,11 +266,10 @@ def part_2(data: Data):
                     prev = move
                 if best_cost == -1 or cost < best_cost:
                     best_cost = cost
-            tot_cost += best_cost    
+            tot_cost += best_cost
             numerical_robot = key
         s += tot_cost * int(keypad.removesuffix("A"))
     return s
-
 
 
 def parse_data(file: str):
@@ -219,22 +283,26 @@ def parse_data(file: str):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--test", action=BooleanOptionalAction, default=False)
-    
+
     args = parser.parse_args()
-    
+
     if args.test:
-        if part_1_example_answer is not None: # type: ignore
+        if part_1_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-1.txt")
             p1 = part_1(data)
             if p1 != part_1_example_answer:
-                print(f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}")
+                print(
+                    f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}"
+                )
             else:
                 print("Example part 1 passed!")
-        if part_2_example_answer is not None: # type: ignore
+        if part_2_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-2.txt")
             p2 = part_2(data)
             if p2 != part_2_example_answer:
-                print(f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}")
+                print(
+                    f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}"
+                )
             else:
                 print("Example part 2 passed!")
     else:

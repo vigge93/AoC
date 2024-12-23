@@ -1,9 +1,9 @@
 #!/bin/pypy3
 import time
-from typing import TypedDict
 from argparse import ArgumentParser, BooleanOptionalAction
-from enum import IntEnum
 from collections import defaultdict
+from enum import IntEnum
+from typing import TypedDict
 
 day = 6
 part_1_example_answer: int | None = 41
@@ -16,13 +16,16 @@ class DataDict(TypedDict):
     blocks_x: defaultdict[int, set[int]]
     blocks_y: defaultdict[int, set[int]]
 
+
 Data = DataDict
+
 
 class Dir(IntEnum):
     NORTH = 0
     EAST = 1
     SOUTH = 2
     WEST = 3
+
 
 def part_1(data: Data):
     grid = data["grid"]
@@ -39,6 +42,7 @@ def part_1(data: Data):
             guard = next_pos
     return len(visited)
 
+
 def part_2(data: Data):
     blocks_x = data["blocks_x"]
     blocks_y = data["blocks_y"]
@@ -54,7 +58,7 @@ def part_2(data: Data):
             direction = Dir((direction + 1) % 4)
         else:
             guard = next_pos
-    
+
     north_cache: dict[tuple[int, int], int] = {}
     east_cache: dict[tuple[int, int], int] = {}
     south_cache: dict[tuple[int, int], int] = {}
@@ -82,11 +86,17 @@ def part_2(data: Data):
                         guard = (guard[0], north_cache[guard])
                     else:
                         misses += 1
-                        next_block = max([block for block in blocks_x[guard[0]] if block < guard[1]], default=-2)
+                        next_block = max(
+                            [block for block in blocks_x[guard[0]] if block < guard[1]],
+                            default=-2,
+                        )
                         north_cache[guard] = next_block + 1
                         guard = (guard[0], next_block + 1)
                 else:
-                    next_block = max([block for block in blocks_x[guard[0]] if block < guard[1]], default=-2)
+                    next_block = max(
+                        [block for block in blocks_x[guard[0]] if block < guard[1]],
+                        default=-2,
+                    )
                     guard = (guard[0], next_block + 1)
             elif direction == Dir.EAST:
                 if block[1] != guard[1]:
@@ -95,11 +105,17 @@ def part_2(data: Data):
                         guard = (east_cache[guard], guard[1])
                     else:
                         misses += 1
-                        next_block = min([block for block in blocks_y[guard[1]] if block > guard[0]], default=-2)
+                        next_block = min(
+                            [block for block in blocks_y[guard[1]] if block > guard[0]],
+                            default=-2,
+                        )
                         east_cache[guard] = next_block - 1
                         guard = (next_block - 1, guard[1])
                 else:
-                    next_block = min([block for block in blocks_y[guard[1]] if block > guard[0]], default=-2)
+                    next_block = min(
+                        [block for block in blocks_y[guard[1]] if block > guard[0]],
+                        default=-2,
+                    )
                     guard = (next_block - 1, guard[1])
             elif direction == Dir.SOUTH:
                 if block[0] != guard[0]:
@@ -108,11 +124,17 @@ def part_2(data: Data):
                         guard = (guard[0], south_cache[guard])
                     else:
                         misses += 1
-                        next_block = min([block for block in blocks_x[guard[0]] if block > guard[1]], default=-2)
+                        next_block = min(
+                            [block for block in blocks_x[guard[0]] if block > guard[1]],
+                            default=-2,
+                        )
                         south_cache[guard] = next_block - 1
                         guard = (guard[0], next_block - 1)
                 else:
-                    next_block = min([block for block in blocks_x[guard[0]] if block > guard[1]], default=-2)
+                    next_block = min(
+                        [block for block in blocks_x[guard[0]] if block > guard[1]],
+                        default=-2,
+                    )
                     guard = (guard[0], next_block - 1)
             elif direction == Dir.WEST:
                 if block[1] != guard[1]:
@@ -121,11 +143,17 @@ def part_2(data: Data):
                         guard = (west_cache[guard], guard[1])
                     else:
                         misses += 1
-                        next_block = max([block for block in blocks_y[guard[1]] if block < guard[0]], default=-2)
+                        next_block = max(
+                            [block for block in blocks_y[guard[1]] if block < guard[0]],
+                            default=-2,
+                        )
                         west_cache[guard] = next_block + 1
                         guard = (next_block + 1, guard[1])
                 else:
-                    next_block = max([block for block in blocks_y[guard[1]] if block < guard[0]], default=-2)
+                    next_block = max(
+                        [block for block in blocks_y[guard[1]] if block < guard[0]],
+                        default=-2,
+                    )
                     guard = (next_block + 1, guard[1])
 
             direction = (direction + 1) % 4
@@ -136,15 +164,22 @@ def part_2(data: Data):
 
     return s
 
+
 direction_mapping = {
     Dir.NORTH: (0, -1),
     Dir.EAST: (1, 0),
     Dir.SOUTH: (0, 1),
-    Dir.WEST: (-1, 0)
+    Dir.WEST: (-1, 0),
 }
 
+
 def parse_data(file: str):
-    data: Data = {"grid": {}, "blocks_x": defaultdict(set), "blocks_y": defaultdict(set), "guard": (-1, -1)}
+    data: Data = {
+        "grid": {},
+        "blocks_x": defaultdict(set),
+        "blocks_y": defaultdict(set),
+        "guard": (-1, -1),
+    }
     with open(file, "r") as f:
         for y, line in enumerate(f):
             for x, pos in enumerate(line.strip()):
@@ -154,30 +189,34 @@ def parse_data(file: str):
                 else:
                     data["grid"][(x, y)] = pos
                     if pos == "#":
-                        data["blocks_x"][x].add(y) 
-                        data["blocks_y"][y].add(x) 
+                        data["blocks_x"][x].add(y)
+                        data["blocks_y"][y].add(x)
     return data
 
 
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--test", action=BooleanOptionalAction, default=False)
-    
+
     args = parser.parse_args()
-    
+
     if args.test:
-        if part_1_example_answer is not None: # type: ignore
+        if part_1_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-1.txt")
             p1 = part_1(data)
             if p1 != part_1_example_answer:
-                print(f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}")
+                print(
+                    f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}"
+                )
             else:
                 print("Example part 1 passed!")
-        if part_2_example_answer is not None: # type: ignore
+        if part_2_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-2.txt")
             p2 = part_2(data)
             if p2 != part_2_example_answer:
-                print(f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}")
+                print(
+                    f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}"
+                )
             else:
                 print("Example part 2 passed!")
     else:

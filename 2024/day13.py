@@ -1,8 +1,8 @@
 #!/bin/python
-import time
-from typing import TypedDict
-from argparse import ArgumentParser, BooleanOptionalAction
 import re
+import time
+from argparse import ArgumentParser, BooleanOptionalAction
+from typing import TypedDict
 
 day = 13
 part_1_example_answer: int | None = 480
@@ -11,10 +11,12 @@ part_2_example_answer: int | None = 875318608908
 COST_A = 3
 COST_B = 1
 
+
 class DataDict(TypedDict):
     clawA: tuple[int, int]
     clawB: tuple[int, int]
     prize: tuple[int, int]
+
 
 Data = list[list[list[int]]]
 
@@ -29,6 +31,7 @@ def part_1(data: Data):
         if (clawA_x*x + clawB_x*y) == prize_x and (clawA_y*x + clawB_y*y) == prize_y:
             s += COST_A*x + COST_B*y
     return s
+
 
 def part_2(data: Data):
     s = 0
@@ -65,22 +68,26 @@ def parse_data(file: str):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--test", action=BooleanOptionalAction, default=False)
-    
+
     args = parser.parse_args()
-    
+
     if args.test:
-        if part_1_example_answer is not None: # type: ignore
+        if part_1_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-1.txt")
             p1 = part_1(data)
             if p1 != part_1_example_answer:
-                print(f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}")
+                print(
+                    f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}"
+                )
             else:
                 print("Example part 1 passed!")
-        if part_2_example_answer is not None: # type: ignore
+        if part_2_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-2.txt")
             p2 = part_2(data)
             if p2 != part_2_example_answer:
-                print(f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}")
+                print(
+                    f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}"
+                )
             else:
                 print("Example part 2 passed!")
     else:

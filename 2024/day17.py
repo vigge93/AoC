@@ -1,7 +1,7 @@
 #!/bin/python
 import time
-from typing import TypedDict, Callable
 from argparse import ArgumentParser, BooleanOptionalAction
+from typing import Callable, TypedDict
 
 day = 17
 part_1_example_answer: str | None = "4,6,3,5,6,3,5,2,1,0"
@@ -13,6 +13,7 @@ class DataDict(TypedDict):
     B: int
     C: int
     program: list[int]
+
 
 Data = DataDict
 
@@ -36,14 +37,14 @@ def part_1(data: Data):
     }
 
     def adv(op: int):
-        data["A"] = data["A"] // 2**operand[op]()
-    
+        data["A"] = data["A"] // 2 ** operand[op]()
+
     def bxl(op: int):
         data["B"] = data["B"] ^ op
-    
+
     def bst(op: int):
         data["B"] = operand[op]() % 8
-        
+
     def jnz(op: int):
         if data["A"] != 0:
             nonlocal pc, jumped
@@ -52,16 +53,16 @@ def part_1(data: Data):
 
     def bxc(op: int):
         data["B"] = data["B"] ^ data["C"] % 8
-    
+
     def out(op: int):
         stdout.append(f"{operand[op]() % 8}")
-    
+
     def bdv(op: int):
-        data["B"] = data["A"] // 2**operand[op]()
-    
+        data["B"] = data["A"] // 2 ** operand[op]()
+
     def cdv(op: int):
-        data["C"] = (data["A"] // 2**operand[op]()) % 8
-    
+        data["C"] = (data["A"] // 2 ** operand[op]()) % 8
+
     instructions = {
         0: adv,
         1: bxl,
@@ -72,7 +73,7 @@ def part_1(data: Data):
         6: bdv,
         7: cdv,
     }
-    
+
     while 0 <= pc < program_size - 1:
         instruction = program[pc]
         op = program[pc + 1]
@@ -81,8 +82,9 @@ def part_1(data: Data):
             pc += 2
         else:
             jumped = False
-    return ','.join(stdout)
-    
+    return ",".join(stdout)
+
+
 def part_2(data: Data):
     data = data.copy()
     program = data["program"]
@@ -100,30 +102,30 @@ def part_2(data: Data):
     }
 
     def adv(op: int):
-        data["A"] = data["A"] // 2**operand[op]()
-    
+        data["A"] = data["A"] // 2 ** operand[op]()
+
     def bxl(op: int):
         data["B"] = data["B"] ^ op
-    
+
     def bst(op: int):
         data["B"] = operand[op]() % 8
-        
+
     def jnz(op: int):
         pass
 
     def bxc(op: int):
         data["B"] = data["B"] ^ data["C"] % 8
-    
+
     def out(op: int):
         nonlocal stdout
         stdout = operand[op]() % 8
-    
+
     def bdv(op: int):
-        data["B"] = data["A"] // 2**operand[op]()
-    
+        data["B"] = data["A"] // 2 ** operand[op]()
+
     def cdv(op: int):
-        data["C"] = (data["A"] // 2**operand[op]()) % 8
-    
+        data["C"] = (data["A"] // 2 ** operand[op]()) % 8
+
     instructions = {
         0: adv,
         1: bxl,
@@ -144,22 +146,22 @@ def part_2(data: Data):
             instructions[instruction](op)
             pc += 2
         return stdout
-    
+
     def run_iteration_fast(a: int):  # type: ignore
-        b = (a % 8)
+        b = a % 8
         b ^= 1
         c = (a >> b) % 8
         a >>= 3
         b ^= 4
         b = b ^ c
         return b % 8
-    
+
     stack: list[tuple[int, int]] = [(0, 0)]
     while stack:
         n, a = stack.pop(0)
         if n == len(program):
             return a
-        next_out = program[-n-1]
+        next_out = program[-n - 1]
         for new in range(8):
             new_a = (a << 3) + new
             # c_out = run_iteration_fast(new_a)
@@ -176,29 +178,35 @@ def parse_data(file: str):
         data["B"] = int(f.readline().split(":")[1].strip())
         data["C"] = int(f.readline().split(":")[1].strip())
         f.readline()
-        data["program"] = [int(p) for p in f.readline().split(":")[1].strip().split(",")]
+        data["program"] = [
+            int(p) for p in f.readline().split(":")[1].strip().split(",")
+        ]
     return data
 
 
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--test", action=BooleanOptionalAction, default=False)
-    
+
     args = parser.parse_args()
-    
+
     if args.test:
-        if part_1_example_answer is not None: # type: ignore
+        if part_1_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-1.txt")
             p1 = part_1(data)
             if p1 != part_1_example_answer:
-                print(f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}")
+                print(
+                    f"Wrong answer to part 1: answer: {p1}, expected: {part_1_example_answer}"
+                )
             else:
                 print("Example part 1 passed!")
-        if part_2_example_answer is not None: # type: ignore
+        if part_2_example_answer is not None:  # type: ignore
             data = parse_data(f"day{day}.xexample-2.txt")
             p2 = part_2(data)
             if p2 != part_2_example_answer:
-                print(f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}")
+                print(
+                    f"Wrong answer to part 2: answer: {p2}, expected: {part_2_example_answer}"
+                )
             else:
                 print("Example part 2 passed!")
     else:
