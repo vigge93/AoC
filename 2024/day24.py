@@ -74,7 +74,6 @@ def part_2(data: Data):
         gates_dict: dict[tuple[frozenset[str], Operator], str] = {}
         x_values: list[tuple[int, int]] = []
         y_values: list[tuple[int, int]] = []
-        x, y = 0, 0
         for lhs, rhs, res, op in gates:
             gates_dict[(frozenset({lhs, rhs}), op)] = res
         for value in values:
@@ -82,11 +81,6 @@ def part_2(data: Data):
                 x_values.append((int(value[1:]), values[value]))
             if value[0] == "y":
                 y_values.append((int(value[1:]), values[value]))
-        for idx, value in sorted(x_values):
-            x += value << idx
-        for idx, value in sorted(y_values):
-            y += value << idx
-        correct_z = x + y
         carry = None
         for i in range(max(x_values)[0]):
             reg_x = values[f"x{i:02}"]
@@ -96,9 +90,7 @@ def part_2(data: Data):
             values[and1] = reg_x & reg_y
             values[xor1] = reg_x ^ reg_y
             if not carry:
-                curr_z = values[xor1]
                 carry = and1
-                print(curr_z, correct_z & 1, carry, values[carry])
             else:
                 and2 = gates_dict[(frozenset([carry, xor1]), Operator.AND)]
                 xor2 = gates_dict[(frozenset([carry, xor1]), Operator.XOR)]
@@ -107,7 +99,6 @@ def part_2(data: Data):
                 values[xor2] = values[carry] ^ values[xor1]
                 values[or1] = values[and1] ^ values[and2]
                 carry = or1
-                curr_z = xor2
     return "cqm,mps,vcv,vjv,vwp,z13,z19,z25"
 
 
