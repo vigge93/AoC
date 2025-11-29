@@ -1,4 +1,7 @@
 <!--- advent_readme_stars table --->
+
+<!--- advent_readme_stars table --->
+
 ## 2024 Results
 
 | Day | Part 1 | Part 2 |
@@ -28,7 +31,6 @@
 | [Day 23](https://adventofcode.com/2024/day/23) | ⭐ | ⭐ |
 | [Day 24](https://adventofcode.com/2024/day/24) | ⭐ | ⭐ |
 | [Day 25](https://adventofcode.com/2024/day/25) | ⭐ | ⭐ |
-<!--- advent_readme_stars table --->
 
 ## 2023 Results
 
