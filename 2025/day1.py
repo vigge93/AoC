@@ -3,69 +3,52 @@ import time
 from argparse import ArgumentParser, BooleanOptionalAction
 from typing import TypedDict
 
-day = 25
+day = 1
 part_1_example_answer: int | None = 3
-part_2_example_answer: int | None = None
+part_2_example_answer: int | None = 6
 
 
 class DataDict(TypedDict):
-    keys: list[list[int]]
-    locks: list[list[int]]
-    
-
-
-Data = DataDict
-
-
-def part_1(data: Data):
-    max_height = 7
-    s = 0
-    for key in data["keys"]:
-        for lock in data["locks"]:
-            fits = True
-            for col in range(len(key)):
-                if key[col] + lock[col] > max_height:
-                    fits = False
-                    break
-            if fits:
-                s += 1
-    return s
-
-
-def part_2(data: Data):
     pass
 
 
+Data = list  # DataDict
+
+
+def part_1(data: Data):
+    s = 50
+    n_zero = 0
+    for line in data:
+        s += line[0] * line[1]
+        s = s % 100
+        if s == 0:
+            n_zero += 1
+    return n_zero
+
+
+def part_2(data: Data):
+    s = 50
+    n_zero = 0
+    for line in data:
+        rot = line[1]
+        min_zeros = rot // 100
+        rot = rot % 100
+        s += line[0] * rot
+        if (s <= 0 or s >= 100) and abs(s) != rot:
+            n_zero += 1
+        n_zero += min_zeros
+        s = s % 100
+    return n_zero
+
+
 def parse_data(file: str):
-    data: Data = {"keys": [], "locks": []}
+    data: Data = []
     with open(file, "r") as f:
-        i = 0
-        key = False
-        key_lock: list[int] = []
         for line in f:
-            if not line.strip():
-                i = 0
-                if key:
-                    data["keys"].append(key_lock)
-                else:
-                    data["locks"].append(key_lock)
-                key_lock = []
-                continue
-            if i == 0:
-                if line[0] == "#":
-                    key = False
-                else:
-                    key = True
-                key_lock = [0] * len(line.strip())
-                
-            for idx, col in enumerate(line.strip()):
-                if col == "#":
-                    key_lock[idx] += 1
-            i += 1
-        if key:
-            data["keys"].append(key_lock)
-        else:
-            data["locks"].append(key_lock)
+            if line[0] == "L":
+                data.append((-1, int(line[1:])))
+            else:
+                data.append((1, int(line[1:])))
     return data
 
 
