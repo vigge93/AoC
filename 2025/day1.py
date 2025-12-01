@@ -1,18 +1,19 @@
 #!/bin/python
+from enum import IntEnum
 import time
 from argparse import ArgumentParser, BooleanOptionalAction
-from typing import TypedDict
 
 day = 1
 part_1_example_answer: int | None = 3
 part_2_example_answer: int | None = 6
 
 
-class DataDict(TypedDict):
-    pass
+class Directon(IntEnum):
+    LEFT = -1
+    RIGHT = 1
 
 
-Data = list  # DataDict
+Data = list[tuple[int, int]]  # DataDict
 
 
 def part_1(data: Data):
@@ -29,14 +30,14 @@ def part_1(data: Data):
 def part_2(data: Data):
     s = 50
     n_zero = 0
-    for line in data:
-        rot = line[1]
-        min_zeros = rot // 100
-        rot = rot % 100
-        s += line[0] * rot
-        if (s <= 0 or s >= 100) and abs(s) != rot:
+    for d in data:
+        dir, rot = d
+        full_loops, rot = divmod(rot, 100)
+        prev_s = s
+        s += dir * rot
+        if prev_s != 0 and not (0 < s < 100):
             n_zero += 1
-        n_zero += min_zeros
+        n_zero += full_loops
         s = s % 100
     return n_zero
 
@@ -46,9 +47,9 @@ def parse_data(file: str):
     with open(file, "r") as f:
         for line in f:
             if line[0] == "L":
-                data.append((-1, int(line[1:])))
+                data.append((Directon.LEFT, int(line[1:])))
             else:
-                data.append((1, int(line[1:])))
+                data.append((Directon.RIGHT, int(line[1:])))
     return data
 
 
