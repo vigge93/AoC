@@ -1,4 +1,4 @@
-#!../venv/bin/python
+#!/bin/pypy3
 import time
 from argparse import ArgumentParser, BooleanOptionalAction
 
@@ -6,12 +6,12 @@ day = 4
 part_1_example_answer: int | None = 13
 part_2_example_answer: int | None = 43
 
-Data = dict[tuple[int, int], set[tuple[int, int]]]
+
+Data = dict[tuple[int, int], list[tuple[int, int]]]
 
 offs = ((-1, -1), (0, -1), (1, -1),
         (-1, 0),           (1, 0),
         (-1, 1),  (0, 1),  (1, 1))
-
 
 def part_1(data: Data):
     s = 0
@@ -21,33 +21,35 @@ def part_1(data: Data):
         for x_off, y_off in offs:
             if (x + x_off, y + y_off) in data:
                 adj_rolls += 1
-        if adj_rolls < 4:
+            if adj_rolls >= 4:
+                break
+        else:
             s += 1
     return s
 
 def part_2(data: Data):
     s = 0
-    
+
+    dirty: Data = data
     for roll in data:
         x, y = roll
         for x_off, y_off in offs:
             if (x + x_off, y + y_off) in data:
-                data[roll].add((x + x_off, y + y_off))
+                data[roll].append((x + x_off, y + y_off))
 
-    removed = True
-    while removed:
-        data_proxy = data.copy()
-        removed = False
-        for roll in data:
-            x, y = roll
-            if len(data_proxy[roll]) < 4:
-                s += 1
-                removed = True
-                for adj in data_proxy[roll]:
-                    data_proxy[adj].remove(roll)
-                del data_proxy[roll]
-
-        data = data_proxy
+    while dirty:
+        new_dirty: Data = {}
+        for roll, adjacents in dirty.copy().items():
+            if len(adjacents) >= 4:
+                continue
+            for adj in adjacents:
+                data[adj].remove(roll)
+                new_dirty[adj] = data[adj]
+            if roll in new_dirty:
+                del new_dirty[roll]
+            s += 1
+                
+        dirty = new_dirty
     return s
 
 
@@ -55,9 +57,9 @@ def parse_data(file: str):
     data: Data = {}
     with open(file, "r") as f:
         for y, line in enumerate(f):
-            for x, cell in enumerate(line):
+            for x, cell in enumerate(line.strip()):
                 if cell == "@":
-                    data[(x, y)] = set()
+                    data[(x, y)] = []
     return data
 
 
