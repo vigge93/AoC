@@ -17,4 +17,4 @@ if __name__ == "__main__":
             pass
         with open(f"day{day}.xexample-2.txt", "x") as f:
             pass
-        os.system(f"aocdl -year 2025 -day {day}")
+        os.system(f"aocdl -year 2025 -day {day} -wait")

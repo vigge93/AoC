@@ -1,4 +1,4 @@
-#!/bin/python
+#!../venv/bin/python
 from enum import IntEnum
 import time
 from argparse import ArgumentParser, BooleanOptionalAction
@@ -13,7 +13,7 @@ class Directon(IntEnum):
     RIGHT = 1
 
 
-Data = list[tuple[int, int]]  # DataDict
+Data = list[tuple[int, int]]
 
 
 def part_1(data: Data):

@@ -1,4 +1,4 @@
-#!/bin/python
+#!../venv/bin/python
 import time
 from argparse import ArgumentParser, BooleanOptionalAction
 
@@ -6,8 +6,7 @@ day = 3
 part_1_example_answer: int | None = 357
 part_2_example_answer: int | None = 3121910778619
 
-Data = list[str]  # DataDict
-
+Data = list[str]
 
 def part_1(data: Data):
     s = 0

@@ -1,4 +1,4 @@
-#!/bin/python
+#!../venv/bin/python
 import time
 from argparse import ArgumentParser, BooleanOptionalAction
 from typing import TypedDict

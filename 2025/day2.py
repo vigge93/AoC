@@ -1,35 +1,39 @@
-#!/bin/pypy3
+#!../venv/bin/python
 import time
 from argparse import ArgumentParser, BooleanOptionalAction
-from typing import TypedDict
+from multiprocessing import Pool
 
 import re
+
+import numpy as np
 
 day = 2
 part_1_example_answer: int | None = 1227775554
 part_2_example_answer: int | None = 4174379265
 
+Data = list[tuple[int, int]]
 
-class DataDict(TypedDict):
-    pass
+regexp_1 = re.compile(r"(\d+)\1")
+regexp_2 = re.compile(r"(\d+)\1+")
 
-
-Data = list[tuple[int, int]]  # DataDict
+def get_sum(inp: tuple[int, int]):
+    s_2 = 0
+    s_1 = 0
+    for serial in range(inp[0], inp[1]+1):
+        serial_str = str(serial)
+        if regexp_2.fullmatch(serial_str):
+            s_2 += serial
+            if regexp_1.fullmatch(serial_str):
+                s_1 += serial
+    return s_1, s_2
 
 
 def part_1_and_2(data: Data):
-    s_1 = 0
-    s_2 = 0
-    regexp_1 = re.compile(r"(\d+)\1")
-    regexp_2 = re.compile(r"(\d+)\1+")
-    for r_start, r_end in data:
-        for serial in range(r_start, r_end+1):
-            serial_str = str(serial)
-            if regexp_2.fullmatch(serial_str):
-                s_2 += serial
-                if regexp_1.fullmatch(serial_str):
-                    s_1 += serial
-    return s_1, s_2
+    with Pool() as p:
+        res = np.fromiter(p.imap_unordered(get_sum, data), dtype=np.dtype((int, 2)))
+        res = np.add.reduce(res)
+    return res[0], res[1]
+
 
 def parse_data(file: str):
     data: Data = []
