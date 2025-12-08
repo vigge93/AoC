@@ -1,5 +1,5 @@
 if [ -z $1 ]; then
-    days=25
+    days=12
 else
     days=$1
 fi
