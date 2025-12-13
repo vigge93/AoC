@@ -159,8 +159,7 @@ def part_1_recurse_factory(presents: list[set[tuple[int, int]]]):
 def part_1(data: Data):
     s = 0
     areas = list(map(len, data["presents"]))
-    for i, tree in enumerate(data["trees"]):
-        print(i)
+    for tree in data["trees"]:
         (s_x, s_y), presents = tree
         max_area = s_x * s_y
         area = 0
