@@ -73,6 +73,7 @@ def part_2(data: Data):
     s += p_s
     return s
 
+
 def parse_data(file: str):
     data: Data = []
     with open(file, "r") as f:

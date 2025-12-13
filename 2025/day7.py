@@ -1,8 +1,8 @@
 #!../venv/bin/python
 import time
 from argparse import ArgumentParser, BooleanOptionalAction
-from typing import TypedDict
 from functools import cache
+from typing import TypedDict
 
 day = 7
 part_1_example_answer: int | None = 21
@@ -13,10 +13,16 @@ class DataDict(TypedDict):
     tachyon: tuple[int, int]
     splitters: set[tuple[int, int]]
 
+
 Data = DataDict
 
 
-def move_tach_p1(tach: tuple[int, int], max_y: int, splitters: set[tuple[int, int]], visited: set[tuple[int, int]]) -> int:
+def move_tach_p1(
+    tach: tuple[int, int],
+    max_y: int,
+    splitters: set[tuple[int, int]],
+    visited: set[tuple[int, int]],
+) -> int:
     while tach[1] <= max_y:
         if tach in visited:
             return 1
@@ -29,6 +35,7 @@ def move_tach_p1(tach: tuple[int, int], max_y: int, splitters: set[tuple[int, in
             return s
     return 1
 
+
 def move_tach_p2_factory(max_y: int, splitters: set[tuple[int, int]]):
     @cache
     def move_tach_p2(tach: tuple[int, int]) -> int:
@@ -40,6 +47,7 @@ def move_tach_p2_factory(max_y: int, splitters: set[tuple[int, int]]):
                 s += move_tach_p2((tach[0] + 1, tach[1]))
                 return s
         return 1
+
     return move_tach_p2
 
 
@@ -64,7 +72,7 @@ def part_2(data: Data):
 def parse_data(file: str):
     data: Data = {
         "tachyon": (0, 0),
-        "splitters": set()
+        "splitters": set(),
     }
     with open(file, "r") as f:
         for y, line in enumerate(f):

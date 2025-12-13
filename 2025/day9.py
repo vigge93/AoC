@@ -1,7 +1,7 @@
 #!../venv/bin/python
-from itertools import pairwise
 import time
 from argparse import ArgumentParser, BooleanOptionalAction
+from itertools import pairwise
 
 day = 9
 part_1_example_answer: int | None = 50
@@ -14,8 +14,8 @@ Data = list[tuple[int, int]]
 def part_1(data: Data):
     largest_a = 0
     for i, (x1, y1) in enumerate(data):
-        for x2, y2 in data[i+1:]:
-            a = (abs(x2-x1)+1)*(abs(y2-y1) + 1)
+        for x2, y2 in data[i + 1 :]:
+            a = (abs(x2 - x1) + 1) * (abs(y2 - y1) + 1)
             if a > largest_a:
                 largest_a = a
     return largest_a
@@ -29,11 +29,11 @@ def part_2(data: Data):
             border.add((x, y1))
         for y in range(min(y1, y2), max(y1, y2)):
             border.add((x1, y))
-    
+
     squares: list[tuple[int, tuple[tuple[int, int], tuple[int, int]]]] = []
     for i, (x1, y1) in enumerate(data):
-        for x2, y2 in data[i+1:]:
-            a = (abs(x2-x1)+1)*(abs(y2-y1) + 1)
+        for x2, y2 in data[i + 1 :]:
+            a = (abs(x2 - x1) + 1) * (abs(y2 - y1) + 1)
             squares.append((a, ((x1, y1), (x2, y2))))
 
     squares.sort(reverse=True)
@@ -51,6 +51,7 @@ def part_2(data: Data):
         if found:
             return a
     return 0
+
 
 def parse_data(file: str):
     data: Data = []

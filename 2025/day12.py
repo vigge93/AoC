@@ -1,38 +1,44 @@
 #!../venv/bin/python
-from functools import cache
 import time
 from argparse import ArgumentParser, BooleanOptionalAction
+from functools import cache
 from typing import Iterable, TypedDict
 
 day = 12
 part_1_example_answer: int | None = 2
 
+
 class DataDict(TypedDict):
     presents: list[set[tuple[int, int]]]
     trees: list[tuple[tuple[int, int], list[int]]]
 
+
 Data = DataDict
+
 
 def print_grid(data: Iterable[tuple[int, int]]):
     max_x = max([x for (x, _) in data])
     max_y = max([y for (_, y) in data])
     grid = [["." for _ in range(max_x + 1)] for _ in range(max_y + 1)]
-    for (x, y) in data:
+    for x, y in data:
         grid[y][x] = "#"
     grid = ["".join(row) for row in grid]
     print(*grid, sep="\n")
 
 
-
 def get_offset_func(x_off: int, y_off: int):
     def offset(present: tuple[int, int]):
         return present[0] + x_off, present[1] + y_off
+
     return offset
+
 
 def get_boundary_check_func(x_max: int, y_max: int):
     def check_boundary(present: tuple[int, int]):
         return 0 <= present[0] < x_max and 0 <= present[1] < y_max
+
     return check_boundary
+
 
 def flip_func(present: tuple[int, int]):
     if present[0] == 0:
@@ -41,12 +47,14 @@ def flip_func(present: tuple[int, int]):
         return 0, present[1]
     return present
 
+
 @cache
 def flip_func_f(presents: frozenset[tuple[int, int]]):
     n_set: set[tuple[int, int]] = set()
     for present in presents:
         n_set.add(flip_func(present))
     return frozenset(n_set)
+
 
 @cache
 def rotate_full(presents: frozenset[tuple[int, int]], rotate: int):
@@ -56,11 +64,15 @@ def rotate_full(presents: frozenset[tuple[int, int]], rotate: int):
         n_set.add(rotate_func(present))
     return frozenset(n_set)
 
+
 def get_rotate_func(rotate: int):
     if rotate == 0:
+
         def rotate_func(present: tuple[int, int]):
             return present
+
     else:
+
         def int_rotate_func(present: tuple[int, int]):
             x, y = present
             match present:
@@ -83,16 +95,24 @@ def get_rotate_func(rotate: int):
                 case (2, 2):
                     return (2, 0)
             return x, y
+
         def rotate_func(present: tuple[int, int]):
             for _ in range(rotate):
                 present = int_rotate_func(present)
             return present
+
     return rotate_func
+
 
 def part_1_recurse_factory(presents: list[set[tuple[int, int]]]):
 
     @cache
-    def part_1_recurse(grid: frozenset[tuple[int, int]], current: tuple[int, ...], goal: tuple[int,...], explored: frozenset[tuple[int, int]]=frozenset()):
+    def part_1_recurse(
+        grid: frozenset[tuple[int, int]],
+        current: tuple[int, ...],
+        goal: tuple[int, ...],
+        explored: frozenset[tuple[int, int]] = frozenset(),
+    ):
         if current == goal:
             return True
         remaining_presents: list[int] = []
@@ -118,15 +138,23 @@ def part_1_recurse_factory(presents: list[set[tuple[int, int]]]):
                             new_current = list(current)
                             new_current[idx] += 1
                             if new_current[idx]:
-                                if part_1_recurse(grid - n_present, tuple(new_current), goal, explored | frozenset(visited)):
+                                if part_1_recurse(
+                                    grid - n_present,
+                                    tuple(new_current),
+                                    goal,
+                                    explored | frozenset(visited),
+                                ):
                                     return True
                             else:
-                                if part_1_recurse(grid - n_present, tuple(new_current), goal):
+                                if part_1_recurse(
+                                    grid - n_present, tuple(new_current), goal
+                                ):
                                     return True
             break
         return False
 
     return part_1_recurse
+
 
 def part_1(data: Data):
     s = 0
@@ -137,7 +165,7 @@ def part_1(data: Data):
         max_area = s_x * s_y
         area = 0
         for idx, present in enumerate(presents):
-            area += areas[idx]*present
+            area += areas[idx] * present
         if area > max_area:
             continue
         if max_area >= 9 * sum(presents):
@@ -145,14 +173,19 @@ def part_1(data: Data):
             continue
 
         part_1_recurse = part_1_recurse_factory(data["presents"])
-        if part_1_recurse(frozenset([(x, y) for x in range(s_x) for y in range(s_y)]), (0,)*len(presents), tuple(presents)):
+        if part_1_recurse(
+            frozenset([(x, y) for x in range(s_x) for y in range(s_y)]),
+            (0,) * len(presents),
+            tuple(presents),
+        ):
             s += 1
     return s
+
 
 def parse_data(file: str):
     data: Data = {
         "presents": [],
-        "trees": []
+        "trees": [],
     }
     with open(file, "r") as f:
         present_c: set[tuple[int, int]] = set()
@@ -178,7 +211,9 @@ def parse_data(file: str):
                 size, presents = line.strip().split(":")
                 size_x, size_y = size.split("x")
                 presents = presents.split()
-                data["trees"].append(((int(size_x), int(size_y)), list(map(int, presents))))
+                data["trees"].append(
+                    ((int(size_x), int(size_y)), list(map(int, presents)))
+                )
     return data
 
 

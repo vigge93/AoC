@@ -1,7 +1,7 @@
 #!../venv/bin/python
-from functools import cache
 import time
 from argparse import ArgumentParser, BooleanOptionalAction
+from functools import cache
 from typing import TypedDict
 
 day = 11
@@ -29,6 +29,7 @@ def find_paths_factory(data: Data):
         return s
 
     return find_paths
+
 
 def part_1(data: Data):
     find_paths = find_paths_factory(data)

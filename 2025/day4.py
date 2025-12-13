@@ -27,6 +27,7 @@ def part_1(data: Data):
             s += 1
     return s
 
+
 def part_2(data: Data):
     s = 0
 
@@ -48,7 +49,7 @@ def part_2(data: Data):
             if roll in new_dirty:
                 del new_dirty[roll]
             s += 1
-                
+
         dirty = new_dirty
     return s
 

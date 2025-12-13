@@ -56,7 +56,7 @@ def part_2(data: Data):
 def parse_data(file: str):
     data: Data = {
         "fresh": [],
-        "ingredients": []
+        "ingredients": [],
     }
     fresh = True
     with open(file, "r") as f:

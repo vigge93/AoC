@@ -1,9 +1,8 @@
 #!../venv/bin/python
+import re
 import time
 from argparse import ArgumentParser, BooleanOptionalAction
 from multiprocessing import Pool
-
-import re
 
 import numpy as np
 
@@ -16,10 +15,11 @@ Data = list[tuple[int, int]]
 regexp_1 = re.compile(r"(\d+)\1")
 regexp_2 = re.compile(r"(\d+)\1+")
 
+
 def get_sum(inp: tuple[int, int]):
     s_2 = 0
     s_1 = 0
-    for serial in range(inp[0], inp[1]+1):
+    for serial in range(inp[0], inp[1] + 1):
         serial_str = str(serial)
         if regexp_2.fullmatch(serial_str):
             s_2 += serial

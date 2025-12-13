@@ -8,12 +8,13 @@ part_2_example_answer: int | None = 3121910778619
 
 Data = list[str]
 
+
 def part_1(data: Data):
     s = 0
     for bank in data:
         largest = max(bank[:-1])
         largest_idx = bank.index(largest)
-        second_largest = max(bank[largest_idx+1:])
+        second_largest = max(bank[largest_idx + 1 :])
         s += int(largest + second_largest)
     return s
 
@@ -24,7 +25,7 @@ def part_2(data: Data):
         prev_largest_idx = -1
         bits: list[str] = []
         for n in range(11, -1, -1):
-            active = bank[prev_largest_idx+1:]
+            active = bank[prev_largest_idx + 1 :]
             if n != 0:
                 active = active[:-n]
             largest = max(active)
@@ -32,7 +33,6 @@ def part_2(data: Data):
             prev_largest_idx = active.index(largest) + prev_largest_idx + 1
         s += int("".join(bits))
     return s
-
 
 
 def parse_data(file: str):

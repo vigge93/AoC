@@ -1,7 +1,7 @@
 #!../venv/bin/python
-from enum import IntEnum
 import time
 from argparse import ArgumentParser, BooleanOptionalAction
+from enum import IntEnum
 
 day = 1
 part_1_example_answer: int | None = 3

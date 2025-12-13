@@ -1,8 +1,9 @@
 #!../venv/bin/python
-from dataclasses import dataclass
 import itertools
 import time
 from argparse import ArgumentParser, BooleanOptionalAction
+from dataclasses import dataclass
+
 import numpy as np
 import scipy
 
@@ -15,11 +16,12 @@ part_2_example_answer: int | None = 33
 class Machine:
     indicator_lights: int
     button_bits: list[int]
-    buttons: list[tuple[int,...]]
-    joltic: tuple[int,...]
+    buttons: list[tuple[int, ...]]
+    joltic: tuple[int, ...]
 
 
 Data = list[Machine]  # DataDict
+
 
 def find_indicator_flips_bfs(buttons: list[int], target_state: int):
     for n in range(1, len(buttons) + 1):
@@ -31,12 +33,14 @@ def find_indicator_flips_bfs(buttons: list[int], target_state: int):
                 return n
     raise Exception("Did not find any possible flips!")
 
+
 def part_1(data: Data):
     s = 0
     for machine in data:
         s += find_indicator_flips_bfs(machine.button_bits, machine.indicator_lights)
     return s
-    
+
+
 def part_2(data: Data):
     s = 0
     for machine in data:
@@ -45,10 +49,10 @@ def part_2(data: Data):
         for joltic in range(rows):
             for i, button in enumerate(machine.buttons):
                 if joltic in button:
-                    A[joltic,i] = 1
+                    A[joltic, i] = 1
         b = np.array(machine.joltic)
 
-        res = scipy.optimize.linprog([1]*cols, A_eq=A,b_eq=b, integrality=True)
+        res = scipy.optimize.linprog([1] * cols, A_eq=A, b_eq=b, integrality=True)
         s += round(sum(res.x))
     return s
 

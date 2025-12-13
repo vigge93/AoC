@@ -2,8 +2,8 @@
 import heapq
 import time
 from argparse import ArgumentParser, BooleanOptionalAction
-from typing import TypedDict
 from math import dist
+from typing import TypedDict
 
 day = 8
 part_1_example_answer: int | None = 40
@@ -14,15 +14,16 @@ class DataDict(TypedDict):
     pass
 
 
-Data = list[tuple[int, int, int]]  # DataDict
+Coord = tuple[int, int, int]
+Data = list[Coord]  # DataDict
 
 
 def part_1(data: Data, n: int):
-    distances: list[tuple[float, tuple[tuple[int, int, int], tuple[int, int, int]]]] = []
-    circuits: dict[tuple[int, int, int], set[tuple[int, int, int]]] = {}
+    distances: list[tuple[float, tuple[Coord, Coord]]] = []
+    circuits: dict[Coord, set[Coord]] = {}
 
     for i, first in enumerate(data):
-        for second in data[i + 1:]:
+        for second in data[i + 1 :]:
             heapq.heappush(distances, (dist(first, second), (first, second)))
 
     for _, (fr, to) in heapq.nsmallest(n, distances):
@@ -50,16 +51,16 @@ def part_1(data: Data, n: int):
             seen_ids.add(id(conn))
 
     connected = sorted(connected, reverse=True)
-    return connected[0]*connected[1]*connected[2]
+    return connected[0] * connected[1] * connected[2]
 
 
 def part_2(data: Data):
-    distances: list[tuple[float, tuple[tuple[int, int, int], tuple[int, int, int]]]] = []
-    circuits: dict[tuple[int, int, int], list[tuple[int, int, int]]] = {}
+    distances: list[tuple[float, tuple[Coord, Coord]]] = []
+    circuits: dict[Coord, list[Coord]] = {}
     ids: list[int] = []
 
     for i, first in enumerate(data):
-        for second in data[i + 1:]:
+        for second in data[i + 1 :]:
             heapq.heappush(distances, (dist(first, second), (first, second)))
 
     while True:
@@ -81,9 +82,9 @@ def part_2(data: Data):
             circuits[to] = new_set
             circuits[fr] = new_set
             ids.append(id(new_set))
-        
+
         if len(ids) == 1 and len(circuits) == len(data):
-            return fr[0]*to[0]
+            return fr[0] * to[0]
 
 
 def parse_data(file: str):
